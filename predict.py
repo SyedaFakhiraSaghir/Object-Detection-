@@ -1,25 +1,25 @@
-# ==================== PART 3: INFERENCE ON NEW IMAGE ====================
+# ==================== PART 3: RUN INFERENCE ON NEW IMAGE ====================
 from ultralytics import YOLO
-import matplotlib.pyplot as plt
 import cv2
+from matplotlib import pyplot as plt
 
-# Load trained model
+# 1️⃣ Load trained YOLO model
 model = YOLO("object_detection_runs/exp1/weights/best.pt")
 
-# Path to new image (you can replace this with your own)
-img_path = "test_image.jpg"  # make sure this image exists in your working dir
+# 2️⃣ Specify the input image
+image_path = "image.png"   # Change to your image filename
 
-# Perform detection
-results = model(img_path, conf=0.5)
+# 3️⃣ Run object detection
+results = model.predict(source=image_path, conf=0.25, save=True, show=False)
 
-# Save and show results
-results.save(save_dir="inference_results")
+# 4️⃣ Display the detected image
+for r in results:
+    im_array = r.plot()  # BGR image with detections
+    im_rgb = cv2.cvtColor(im_array, cv2.COLOR_BGR2RGB)
+    plt.figure(figsize=(10, 8))
+    plt.imshow(im_rgb)
+    plt.axis("off")
+    plt.title("Detected Objects")
+    plt.show()
 
-# Visualize with bounding boxes
-img = cv2.imread("inference_results/image0.jpg")
-img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-plt.figure(figsize=(10, 8))
-plt.imshow(img)
-plt.axis('off')
-plt.title("Detected Objects")
-plt.show()
+print("\n✅ Object detection complete! Check 'runs/predict' folder for saved results.")
